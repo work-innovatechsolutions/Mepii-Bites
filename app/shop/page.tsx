@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, Suspense } from "react";
+import React, { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal, X, ArrowUpDown, Sparkles, Check } from "lucide-react";
 import { PRODUCTS, Product } from "@/data/products";
@@ -30,6 +30,23 @@ function ShopContent() {
     initialSort === "newest" ? "featured" : "featured"
   );
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
+
+  // Synchronize state when query parameters change (e.g. from navbar navigation)
+  useEffect(() => {
+    if (initialFilter === "bestseller") {
+      setSelectedCategory("Bestsellers");
+    } else if (initialCategory) {
+      setSelectedCategory(initialCategory);
+    }
+    if (initialView === "wishlist") {
+      setViewOnlyWishlist(true);
+    } else if (initialView === "all") {
+      setViewOnlyWishlist(false);
+    }
+    if (initialSort) {
+      setSortBy(initialSort);
+    }
+  }, [initialFilter, initialCategory, initialView, initialSort]);
 
   const categoryPills = [
     { label: "All", value: "All" },
@@ -141,14 +158,28 @@ function ShopContent() {
         <div className="mb-8 sm:mb-10 text-center sm:text-left">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-terracotta/10 text-terracotta text-xs font-bold uppercase tracking-wider mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>100% Roasted Goodness</span>
+            <span>
+              {selectedCategory === "Bestsellers"
+                ? "Top Customer Favourites"
+                : "100% Roasted Goodness"}
+            </span>
           </div>
           <h1 className="editorial-headline text-3xl sm:text-5xl font-black text-dark tracking-tight">
-            {viewOnlyWishlist ? "YOUR WISHLIST" : "SHOP ALL SNACKS"}
+            {viewOnlyWishlist
+              ? "YOUR WISHLIST"
+              : selectedCategory === "Bestsellers"
+              ? "BESTSELLING CRUNCH"
+              : selectedCategory !== "All"
+              ? `${selectedCategory.toUpperCase()}`
+              : "SHOP ALL SNACKS"}
           </h1>
           <p className="mt-2 text-sm sm:text-base text-muted max-w-xl">
             {viewOnlyWishlist
               ? `Saved munchies (${filteredProducts.length} items)`
+              : selectedCategory === "Bestsellers"
+              ? `Our highest-rated customer favourites (${filteredProducts.length} snacks) roasted to peak crunchiness.`
+              : selectedCategory !== "All"
+              ? `Handcrafted slow-roasted snacks in our signature ${selectedCategory.toLowerCase()} collection.`
               : "Find your next favourite crunch. From fiery peri peri foxnuts to slow-roasted tandoori cashews."}
           </p>
         </div>

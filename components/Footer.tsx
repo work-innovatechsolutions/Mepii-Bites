@@ -35,7 +35,7 @@ function YoutubeIcon({ className = "w-4 h-4" }: { className?: string }) {
 export default function Footer() {
   const shopLinks = [
     { label: "All Snacks", href: "/shop" },
-    { label: "Bestsellers", href: "/shop?filter=bestseller" },
+    { label: "Bestsellers", href: "/bestsellers" },
     { label: "Roasted Makhana", href: "/category/roasted-makhana" },
     { label: "Trail Mixes", href: "/category/trail-mixes" },
     { label: "Nuts & Seeds", href: "/category/nuts-and-seeds" },

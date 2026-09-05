@@ -88,8 +88,9 @@ export default function MobileMenu({ isOpen, onClose, onOpenSearch }: MobileMenu
             Browse Snacks
           </p>
           {[
+            { label: "Home", href: "/" },
             { label: "Shop All Snacks", href: "/shop" },
-            { label: "Bestsellers", href: "/shop?filter=bestseller" },
+            { label: "Bestsellers", href: "/bestsellers" },
             { label: "Curated Combos & Boxes", href: "/category/curated-combos" },
             { label: "Our Story & Values", href: "/about" },
             { label: "Customer Support & FAQs", href: "/contact" },
