@@ -16,7 +16,7 @@ export default function WhatsAppWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [customMsg, setCustomMsg] = useState("");
 
-  const phoneNumber = "919876543210"; // Official customer helpline
+  const phoneNumber = "918708992266"; // Official client WhatsApp hotline (+91 870 899 2266)
 
   const openWhatsApp = (message: string) => {
     const encoded = encodeURIComponent(message);

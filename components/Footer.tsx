@@ -44,6 +44,7 @@ export default function Footer() {
 
   const helpLinks = [
     { label: "Contact Us", href: "/contact" },
+    { label: "WhatsApp: +91 870 899 2266", href: "https://wa.me/918708992266" },
     { label: "Shipping Policy", href: "/contact#shipping" },
     { label: "Returns & Exchanges", href: "/contact#returns" },
     { label: "FAQs", href: "/contact#faq" },
