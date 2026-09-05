@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { X, Send, MessageSquare, Package, Gift, ShieldAlert, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 function WhatsAppIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
@@ -54,109 +55,144 @@ export default function WhatsAppWidget() {
 
   return (
     <div className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end">
-      {/* Expandable Hub Drawer / Card */}
-      {isOpen && (
-        <div className="w-[320px] sm:w-[360px] bg-white rounded-3xl shadow-2xl border border-stone-200/90 overflow-hidden mb-3 animate-in fade-in slide-in-from-bottom-5 duration-300">
-          {/* Header */}
-          <div className="p-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white/80 bg-white shrink-0 shadow-xs">
-                <Image
-                  src="/logo.jpg"
-                  alt="Mepii Bites Support"
-                  fill
-                  sizes="40px"
-                  className="object-cover"
-                />
+      {/* Expandable Hub Drawer / Card with smooth spring opening and closing */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            key="whatsapp-modal"
+            initial={{ opacity: 0, scale: 0.85, y: 20, transformOrigin: "bottom right" }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.85, y: 15, transition: { duration: 0.22, ease: "easeIn" } }}
+            transition={{ type: "spring", damping: 25, stiffness: 320 }}
+            className="w-[320px] sm:w-[360px] bg-white rounded-3xl shadow-2xl border border-stone-200/90 overflow-hidden mb-3"
+          >
+            {/* Header */}
+            <div className="p-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <motion.div
+                  whileHover={{ rotate: 8, scale: 1.05 }}
+                  className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white/80 bg-white shrink-0 shadow-xs"
+                >
+                  <Image
+                    src="/logo.jpg"
+                    alt="Mepii Bites Support"
+                    fill
+                    sizes="40px"
+                    className="object-cover"
+                  />
+                </motion.div>
+                <div className="leading-tight">
+                  <h4 className="font-serif font-black text-sm text-white">
+                    Mepii Bites Helpdesk
+                  </h4>
+                  <span className="flex items-center gap-1 text-[10px] text-emerald-100 font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
+                    Online • Replies in ~5 mins
+                  </span>
+                </div>
               </div>
-              <div className="leading-tight">
-                <h4 className="font-serif font-black text-sm text-white">
-                  Mepii Bites Helpdesk
-                </h4>
-                <span className="flex items-center gap-1 text-[10px] text-emerald-100 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-                  Online • Replies in ~5 mins
-                </span>
-              </div>
+
+              <motion.button
+                whileHover={{ rotate: 90, scale: 1.1 }}
+                whileTap={{ scale: 0.88 }}
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 text-white/80 hover:text-white rounded-full hover:bg-white/20 transition-colors focus:outline-none"
+                aria-label="Close WhatsApp widget"
+              >
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
+              </motion.button>
             </div>
 
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-1 text-white/80 hover:text-white rounded-full hover:bg-white/20 transition-colors"
-              aria-label="Close WhatsApp widget"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+            {/* Quick Action Options with Cascading Entrance */}
+            <div className="p-3 bg-stone-50/70 border-b border-stone-100 space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted px-1 block">
+                How can we help you today?
+              </span>
 
-          {/* Quick Action Options */}
-          <div className="p-3 bg-stone-50/70 border-b border-stone-100 space-y-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted px-1 block">
-              How can we help you today?
-            </span>
+              {quickActions.map((action, idx) => (
+                <motion.button
+                  key={idx}
+                  initial={{ opacity: 0, x: 14 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.05 + idx * 0.035, duration: 0.2 }}
+                  whileHover={{ scale: 1.015, x: 2 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => openWhatsApp(action.message)}
+                  className="w-full text-left p-2.5 bg-white hover:bg-emerald-50/70 border border-stone-200/70 hover:border-emerald-300 rounded-xl transition-all duration-200 flex items-start gap-2.5 group shadow-2xs"
+                >
+                  <div className="p-1.5 bg-stone-100 group-hover:bg-emerald-100 rounded-lg shrink-0 transition-colors">
+                    {action.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="block text-xs font-bold text-dark group-hover:text-emerald-700 transition-colors truncate">
+                      {action.title}
+                    </span>
+                    <span className="block text-[10px] text-muted truncate">
+                      {action.desc}
+                    </span>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
 
-            {quickActions.map((action, idx) => (
-              <button
-                key={idx}
-                onClick={() => openWhatsApp(action.message)}
-                className="w-full text-left p-2.5 bg-white hover:bg-emerald-50/70 border border-stone-200/70 hover:border-emerald-300 rounded-xl transition-all duration-200 flex items-start gap-2.5 group active:scale-98 shadow-2xs"
+            {/* Direct Custom Message Form */}
+            <div className="p-3 bg-white">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (customMsg.trim()) {
+                    openWhatsApp(customMsg);
+                  }
+                }}
+                className="flex items-center gap-2"
               >
-                <div className="p-1.5 bg-stone-100 group-hover:bg-emerald-100 rounded-lg shrink-0 transition-colors">
-                  {action.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="block text-xs font-bold text-dark group-hover:text-emerald-700 transition-colors truncate">
-                    {action.title}
-                  </span>
-                  <span className="block text-[10px] text-muted truncate">
-                    {action.desc}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
+                <input
+                  type="text"
+                  value={customMsg}
+                  onChange={(e) => setCustomMsg(e.target.value)}
+                  placeholder="Type your message..."
+                  className="flex-1 px-3.5 py-2 bg-stone-100 border border-stone-200 rounded-xl text-xs font-medium text-dark focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                />
+                <motion.button
+                  whileHover={{ scale: 1.06 }}
+                  whileTap={{ scale: 0.92 }}
+                  type="submit"
+                  className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors shrink-0 shadow-sm"
+                  aria-label="Send WhatsApp message"
+                >
+                  <Send className="w-4 h-4" />
+                </motion.button>
+              </form>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Direct Custom Message Form */}
-          <div className="p-3 bg-white">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (customMsg.trim()) {
-                  openWhatsApp(customMsg);
-                }
-              }}
-              className="flex items-center gap-2"
-            >
-              <input
-                type="text"
-                value={customMsg}
-                onChange={(e) => setCustomMsg(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-1 px-3.5 py-2 bg-stone-100 border border-stone-200 rounded-xl text-xs font-medium text-dark focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              />
-              <button
-                type="submit"
-                className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors shrink-0 shadow-sm active:scale-95"
-                aria-label="Send WhatsApp message"
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Floating Action Trigger Button */}
-      <button
+      {/* Floating Action Trigger Button with Morphing Animation */}
+      <motion.button
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.92 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center gap-2 p-3.5 bg-gradient-to-tr from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 focus:outline-none focus:ring-3 focus:ring-emerald-400/40"
+        className="group relative flex items-center gap-2 p-3.5 bg-gradient-to-tr from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow focus:outline-none focus:ring-3 focus:ring-emerald-400/40"
         aria-label="Open WhatsApp chat helpdesk"
       >
         {/* Subtle glowing radar ring */}
-        <span className="absolute -inset-1 rounded-full bg-emerald-400/30 animate-ping opacity-70 pointer-events-none" />
+        {!isOpen && (
+          <span className="absolute -inset-1 rounded-full bg-emerald-400/30 animate-ping opacity-70 pointer-events-none" />
+        )}
 
-        {/* WhatsApp Icon */}
-        <WhatsAppIcon className="w-6 h-6 text-white drop-shadow-xs" />
+        {/* Animated Icon Rotation between WhatsApp and Close */}
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0, scale: isOpen ? 0.9 : 1 }}
+          transition={{ type: "spring", stiffness: 350, damping: 22 }}
+          className="flex items-center justify-center"
+        >
+          {isOpen ? (
+            <X className="w-6 h-6 text-white" />
+          ) : (
+            <WhatsAppIcon className="w-6 h-6 text-white drop-shadow-xs" />
+          )}
+        </motion.div>
 
         {/* Tooltip on desktop */}
         <span className="hidden sm:inline-block pr-1 text-xs font-bold tracking-wide">
@@ -164,8 +200,10 @@ export default function WhatsAppWidget() {
         </span>
 
         {/* Online green indicator badge */}
-        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-300 border-2 border-white shadow-xs" />
-      </button>
+        {!isOpen && (
+          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-300 border-2 border-white shadow-xs" />
+        )}
+      </motion.button>
     </div>
   );
 }
