@@ -78,13 +78,15 @@ export default function Navbar() {
             {/* === LEFT COLUMN: Hamburger on mobile / Brand on desktop === */}
             <div className="flex items-center lg:w-1/4 justify-start shrink-0">
               {/* Mobile: Hamburger Button */}
-              <button
+              <motion.button
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.88 }}
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="lg:hidden p-2 -ml-1 text-dark hover:text-terracotta active:scale-90 transition-all rounded-lg focus:outline-none"
+                className="lg:hidden p-2 -ml-1 text-dark hover:text-terracotta transition-colors rounded-lg focus:outline-none"
                 aria-label="Open mobile menu"
               >
                 <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
+              </motion.button>
 
               {/* Desktop: Brand Logo Lockup */}
               <Link
