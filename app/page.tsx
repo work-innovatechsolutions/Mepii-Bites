@@ -1,5 +1,5 @@
 import React from "react";
-import Hero from "@/components/Hero";
+import ScrollHero from "@/components/hero/ScrollHero";
 import TrustStrip from "@/components/TrustStrip";
 import CategoryCards from "@/components/CategoryCards";
 import BestsellerSection from "@/components/BestsellerSection";
@@ -15,7 +15,7 @@ import Newsletter from "@/components/Newsletter";
 export default function HomePage() {
   return (
     <>
-      <Hero />
+      <ScrollHero />
       <TrustStrip />
       <CategoryCards />
       <BestsellerSection />

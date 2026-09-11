@@ -22,11 +22,27 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
+      if (pathname === "/") {
+        const heroTrack = document.getElementById("hero-scroll-track");
+        if (heroTrack) {
+          const rect = heroTrack.getBoundingClientRect();
+          // Keep navbar transparent for the entire hero animation track
+          // Only transition to frosted blur once hero has scrolled past the viewport
+          setIsScrolled(rect.bottom <= 80);
+          return;
+        }
+      }
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [pathname]);
 
   // Keyboard shortcut Cmd+K or Ctrl+K for search
   useEffect(() => {
@@ -66,9 +82,11 @@ export default function Navbar() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`sticky top-0 z-40 transition-all duration-300 ${
+        className={`sticky top-0 z-40 transition-all duration-500 ease-out ${
           isScrolled
-            ? "bg-[#FAF7F2]/95 backdrop-blur-md shadow-sm border-b border-stone-200/80 py-2 sm:py-2.5"
+            ? "bg-[#FAF7F2]/85 backdrop-blur-md shadow-xs border-b border-stone-200/60 py-2 sm:py-2.5"
+            : pathname === "/"
+            ? "bg-transparent border-b border-transparent py-3 sm:py-3.5"
             : "bg-[#FAF7F2] py-3 sm:py-3.5 border-b border-stone-200/40"
         }`}
       >
