@@ -41,8 +41,8 @@ async function convertPngFrames() {
         m2: 2.5,
       })
       .webp({
-        quality: 96,
-        effort: 4,
+        quality: 88,
+        effort: 5,
         smartSubsample: false,
       })
       .toFile(outPath);
